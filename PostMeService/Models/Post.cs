@@ -13,8 +13,8 @@ namespace PostMeService.Models
     {
         [Key]
         public int postId { get; set; }
-        [ForeignKey("user")]
-        public int userId { get; set; }
+        //[ForeignKey("user")]
+        //public int userId { get; set; }
         public string headline { get; set; }
         public string description { get; set; }
         public DateTime time { get; set; }

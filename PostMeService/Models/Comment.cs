@@ -16,14 +16,14 @@ namespace PostMeService.Models
         public string description { get; set; }
         public int upvotes { get; set; }
 
-        [ForeignKey("user")]
-        public int userId { get; set; }
+        //[ForeignKey("user")]
+        //public int userId { get; set; }
 
-        [ForeignKey("post")]
-        public int postId { get; set; }
+        //[ForeignKey("post")]
+        //public int postId { get; set; }
 
-        [ForeignKey("comment")]
-        public int? replyOfCommentId { get; set; }
+        //[ForeignKey("replyOfComment")]
+        //public int? replyOfCommentId { get; set; }
 
         public virtual User user { get; set; }
         public virtual Post post { get; set; }
