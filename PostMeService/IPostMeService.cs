@@ -15,5 +15,11 @@ namespace PostMeService
 
         [OperationContract]
         int addUser(Types.User user);
+
+        [OperationContract]
+        void removeUser(int userId);
+
+        [OperationContract]
+        Types.User updateUser(Types.User user);
     }
 }
