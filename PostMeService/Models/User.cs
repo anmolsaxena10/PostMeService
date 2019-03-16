@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PostMeService.Models
 {
-    class User
+    public class User
     {
         [Key]
         public int userId { get; set; }

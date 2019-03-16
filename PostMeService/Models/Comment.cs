@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace PostMeService.Models
 {
-    class Comment
+    public class Comment
     {
+        [Key]
         public int commentId { get; set; }
         public DateTime time { get; set; }
         public string description { get; set; }

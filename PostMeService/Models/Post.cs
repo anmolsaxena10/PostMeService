@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PostMeService.Models
 {
-    class Post
+    public class Post
     {
         [Key]
         public int postId { get; set; }
