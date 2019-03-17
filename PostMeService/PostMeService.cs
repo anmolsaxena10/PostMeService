@@ -10,7 +10,7 @@ namespace PostMeService
     {
         public Types.User getUser(int userId)
         {
-            using(var ctx = new Models.Model())
+            using (var ctx = new Models.Model())
             {
                 Models.User u = ctx.users.FirstOrDefault(x => x.userId == userId);
                 Types.User u1 = new Types.User();
@@ -130,18 +130,18 @@ namespace PostMeService
             string headline = null,
             DateTime? date = null)
         {
-            using(var ctx = new Models.Model())
+            using (var ctx = new Models.Model())
             {
                 var posts = ctx.posts.AsParallel();
                 if (userId != null)
                 {
                     posts = posts.Where(x => x.user.userId == userId);
                 }
-                if(headline != null)
+                if (headline != null)
                 {
                     posts = posts.Where(x => x.headline.Contains(headline));
                 }
-                if(date != null)
+                if (date != null)
                 {
                     posts = posts.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
                 }
@@ -164,7 +164,131 @@ namespace PostMeService
                 }
                 return result;
             }
-
         }
-    }
+        /*****************************************************************************/
+
+        public Types.Comment getComment(int commentId)
+        {
+            using (var ctx = new Models.Model())
+            {
+                Models.Comment c = ctx.comments.FirstOrDefault(x => x.commentId == commentId);
+                Types.Comment c1 = new Types.Comment();
+                c1.commentId = c.commentId;
+                c1.time = c.time;
+                c1.description = c.description;
+                c1.upvotes = c.upvotes;
+                c1.user = new Types.User();
+                c1.user.userId = c.user.userId;
+                c1.user.username = c.user.username;
+                c1.user.firstName = c.user.firstName;
+                c1.user.lastName = c.user.lastName;
+                c1.user.password = c.user.password;
+                c1.post = new Types.Post();
+                c1.post.postId = c.post.postId;
+                c1.post.headline = c.post.headline;
+                c1.post.time = c.post.time;
+                c1.post.description = c.post.description;
+                c1.post.upvotes = c.post.upvotes;
+                c1.post.user = new Types.User();
+                c1.post.user.userId = c.post.user.userId;
+                c1.post.user.username = c.post.user.username;
+                c1.post.user.firstName = c.post.user.firstName;
+                c1.post.user.lastName = c.post.user.lastName;
+                c1.post.user.password = c.post.user.password;
+                return c1;
+            }
+        }
+
+        public int addComment(Types.Comment c)
+        {
+            using (var ctx = new Models.Model())
+            {
+                Models.Comment c1 = new Models.Comment();
+                c1.time = c.time;
+                c1.description = c.description;
+                c1.upvotes = c.upvotes;
+                Models.User u = ctx.users.FirstOrDefault(x => x.userId == c.user.userId);
+                c1.user = u;
+                Models.Post p = ctx.posts.FirstOrDefault(x => x.postId == c.post.postId);
+                c1.post = p;
+                ctx.comments.Add(c1);
+                ctx.SaveChanges();
+                return c1.commentId;
+            }
+        }
+
+        public void removeComment(int commentId)
+        {
+            using (var ctx = new Models.Model())
+            {
+                ctx.comments.Remove(ctx.comments.FirstOrDefault(x => x.commentId == commentId));
+                ctx.SaveChanges();
+            }
+        }
+
+        public Types.Comment updateComment(Types.Comment c)
+        {
+            using (var ctx = new Models.Model())
+            {
+                Models.Comment c1 = ctx.comments.FirstOrDefault(x => x.commentId == c.commentId);
+                c1.time = c.time;
+                c1.description = c.description;
+                c1.upvotes = c.upvotes;
+                ctx.SaveChanges();
+                return c;
+            }
+        }
+
+        public List<Types.Comment> filterComments(
+            int? userId = null,
+            int? postId = null,
+            DateTime? date = null)
+        {
+            using (var ctx = new Models.Model())
+            {
+                var comments = ctx.comments.AsParallel();
+                if (userId != null)
+                {
+                    comments = comments.Where(x => x.user.userId == userId);
+                }
+                if (postId != null)
+                {
+                    comments = comments.Where(x => x.post.postId == postId);
+                }
+                if (date != null)
+                {
+                    comments = comments.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
+                }
+                List<Types.Comment> result = new List<Types.Comment>();
+                foreach (var c in comments.ToList())
+                {
+                    Types.Comment c1 = new Types.Comment();
+                    c1.commentId = c.commentId;
+                    c1.time = c.time;
+                    c1.description = c.description;
+                    c1.upvotes = c.upvotes;
+                    c1.user = new Types.User();
+                    c1.user.userId = c.user.userId;
+                    c1.user.username = c.user.username;
+                    c1.user.firstName = c.user.firstName;
+                    c1.user.lastName = c.user.lastName;
+                    c1.user.password = c.user.password;
+                    c1.post = new Types.Post();
+                    c1.post.postId = c.post.postId;
+                    c1.post.headline = c.post.headline;
+                    c1.post.time = c.post.time;
+                    c1.post.description = c.post.description;
+                    c1.post.upvotes = c.post.upvotes;
+                    c1.post.user = new Types.User();
+                    c1.post.user.userId = c.post.user.userId;
+                    c1.post.user.username = c.post.user.username;
+                    c1.post.user.firstName = c.post.user.firstName;
+                    c1.post.user.lastName = c.post.user.lastName;
+                    c1.post.user.password = c.post.user.password;
+                    result.Add(c1);
+                }
+                return result;
+            }
+        }
+    }  
 }

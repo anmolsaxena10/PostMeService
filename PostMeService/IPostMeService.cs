@@ -39,5 +39,23 @@ namespace PostMeService
             int? userId = null,
             string headline = null,
             DateTime? date = null);
+
+        [OperationContract]
+        Types.Comment getComment(int commentId);
+
+        [OperationContract]
+        int addComment(Types.Comment comment);
+
+        [OperationContract]
+        void removeComment(int commentId);
+
+        [OperationContract]
+        Types.Comment updateComment(Types.Comment comment);
+
+        [OperationContract]
+        List<Types.Comment> filterComments(
+            int? userId = null,
+            int? postId = null,
+            DateTime? date = null);
     }
 }
