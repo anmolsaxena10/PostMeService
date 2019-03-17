@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
-namespace PostMeService.Models
+namespace PostMeService.Types
 {
+    [DataContract]
     public class Post
     {
-        [Key]
+        [DataMember]
         public int postId { get; set; }
-        //[ForeignKey("user")]
-        //public int userId { get; set; }
+        [DataMember]
         public string headline { get; set; }
+        [DataMember]
         public string description { get; set; }
+        [DataMember]
         public DateTime time { get; set; }
+        [DataMember]
         public int upvotes { get; set; }
-
-        public virtual User user { get; set; }
-        public virtual ICollection<Comment> comments { get; set; }
+        [DataMember]
+        public Types.User user { get; set; }
     }
 }
