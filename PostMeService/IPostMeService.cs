@@ -21,5 +21,23 @@ namespace PostMeService
 
         [OperationContract]
         Types.User updateUser(Types.User user);
+
+        [OperationContract]
+        Types.Post getPost(int postId);
+
+        [OperationContract]
+        int addPost(Types.Post post);
+
+        [OperationContract]
+        void removePost(int postId);
+
+        [OperationContract]
+        Types.Post updatePost(Types.Post post);
+
+        [OperationContract]
+        List<Types.Post> filterPosts(
+            int? userId = null,
+            string headline = null,
+            DateTime? date = null);
     }
 }
