@@ -6,13 +6,29 @@ using System.Threading.Tasks;
 
 namespace PostMeService
 {
-    class PostMeService : IPostMeService
+    public class PostMeService : IPostMeService
     {
         public Types.User getUser(int userId)
         {
             using (var ctx = new Models.Model())
             {
                 Models.User u = ctx.users.FirstOrDefault(x => x.userId == userId);
+                Types.User u1 = new Types.User();
+                u1.userId = u.userId;
+                u1.username = u.username;
+                u1.firstName = u.firstName;
+                u1.lastName = u.lastName;
+                u1.password = u.password;
+
+                return u1;
+            }
+        }
+
+        public Types.User verify(string username, string password)
+        {
+            using (var ctx = new Models.Model())
+            {
+                Models.User u = ctx.users.FirstOrDefault(x => x.username == username && x.password == password);
                 Types.User u1 = new Types.User();
                 u1.userId = u.userId;
                 u1.username = u.username;
@@ -126,6 +142,7 @@ namespace PostMeService
         }
 
         public List<Types.Post> filterPosts(
+            int page,
             int? userId = null,
             string headline = null,
             DateTime? date = null)
@@ -145,6 +162,7 @@ namespace PostMeService
                 {
                     posts = posts.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
                 }
+                posts = posts.Skip((page - 1) * 10).Take(10);
                 List<Types.Post> result = new List<Types.Post>();
                 foreach (var p in posts.ToList())
                 {

@@ -14,6 +14,10 @@ namespace PostMeService
         Types.User getUser(int userId);
 
         [OperationContract]
+        Types.User verify(string username, string password);
+
+
+        [OperationContract]
         int addUser(Types.User user);
 
         [OperationContract]
@@ -36,6 +40,7 @@ namespace PostMeService
 
         [OperationContract]
         List<Types.Post> filterPosts(
+            int page,
             int? userId = null,
             string headline = null,
             DateTime? date = null);
