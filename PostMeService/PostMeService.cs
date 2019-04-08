@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -149,36 +150,48 @@ namespace PostMeService
         {
             using (var ctx = new Models.Model())
             {
-                var posts = ctx.posts.AsParallel();
-                if (userId != null)
-                {
-                    posts = posts.Where(x => x.user.userId == userId);
-                }
-                if (headline != null)
-                {
-                    posts = posts.Where(x => x.headline.Contains(headline));
-                }
-                if (date != null)
-                {
-                    posts = posts.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
-                }
-                posts = posts.Skip((page - 1) * 10).Take(10);
                 List<Types.Post> result = new List<Types.Post>();
-                foreach (var p in posts.ToList())
+                var posts = ctx.posts.AsQueryable();
+                try
                 {
-                    var p1 = new Types.Post();
-                    p1.postId = p.postId;
-                    p1.headline = p.headline;
-                    p1.time = p.time;
-                    p1.description = p.description;
-                    p1.upvotes = p.upvotes;
-                    p1.user = new Types.User();
-                    p1.user.userId = p.user.userId;
-                    p1.user.username = p.user.username;
-                    p1.user.firstName = p.user.firstName;
-                    p1.user.lastName = p.user.lastName;
-                    p1.user.password = p.user.password;
-                    result.Add(p1);
+                    if (userId != null)
+                    {
+                        posts = posts.Where(x => x.user.userId == userId);
+                    }
+                    if (headline != null)
+                    {
+                        posts = posts.Where(x => x.headline.Contains(headline));
+                    }
+                    if (date != null)
+                    {
+                        posts = posts.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
+                    }
+
+
+                    posts = posts.OrderBy(p => p.time).Skip((page - 1) * 10).Take(10);
+                    
+                    foreach (var p in posts.ToList())
+                    {
+                        var p1 = new Types.Post();
+                        p1.postId = p.postId;
+                        p1.headline = p.headline;
+                        p1.time = p.time;
+                        p1.description = p.description;
+                        p1.upvotes = p.upvotes;
+                        p1.user = new Types.User();
+                        p1.user.userId = p.user.userId;
+                        p1.user.username = p.user.username;
+                        p1.user.firstName = p.user.firstName;
+                        p1.user.lastName = p.user.lastName;
+                        p1.user.password = p.user.password;
+                        result.Add(p1);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("he");
+                    Debug.WriteLine(ex);
+                    Debug.WriteLine("he");
                 }
                 return result;
             }
@@ -213,6 +226,7 @@ namespace PostMeService
                 c1.post.user.firstName = c.post.user.firstName;
                 c1.post.user.lastName = c.post.user.lastName;
                 c1.post.user.password = c.post.user.password;
+                c1.replyOfComment = c.replyOfComment == null ? -1 : c.replyOfComment.commentId;
                 return c1;
             }
         }
@@ -264,46 +278,58 @@ namespace PostMeService
         {
             using (var ctx = new Models.Model())
             {
-                var comments = ctx.comments.AsParallel();
-                if (userId != null)
-                {
-                    comments = comments.Where(x => x.user.userId == userId);
-                }
-                if (postId != null)
-                {
-                    comments = comments.Where(x => x.post.postId == postId);
-                }
-                if (date != null)
-                {
-                    comments = comments.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
-                }
+                var comments = ctx.comments.AsQueryable();
                 List<Types.Comment> result = new List<Types.Comment>();
-                foreach (var c in comments.ToList())
+                try
                 {
-                    Types.Comment c1 = new Types.Comment();
-                    c1.commentId = c.commentId;
-                    c1.time = c.time;
-                    c1.description = c.description;
-                    c1.upvotes = c.upvotes;
-                    c1.user = new Types.User();
-                    c1.user.userId = c.user.userId;
-                    c1.user.username = c.user.username;
-                    c1.user.firstName = c.user.firstName;
-                    c1.user.lastName = c.user.lastName;
-                    c1.user.password = c.user.password;
-                    c1.post = new Types.Post();
-                    c1.post.postId = c.post.postId;
-                    c1.post.headline = c.post.headline;
-                    c1.post.time = c.post.time;
-                    c1.post.description = c.post.description;
-                    c1.post.upvotes = c.post.upvotes;
-                    c1.post.user = new Types.User();
-                    c1.post.user.userId = c.post.user.userId;
-                    c1.post.user.username = c.post.user.username;
-                    c1.post.user.firstName = c.post.user.firstName;
-                    c1.post.user.lastName = c.post.user.lastName;
-                    c1.post.user.password = c.post.user.password;
-                    result.Add(c1);
+                    if (userId != null)
+                    {
+                        comments = comments.Where(x => x.user.userId == userId);
+                    }
+                    if (postId != null)
+                    {
+                        comments = comments.Where(x => x.post.postId == postId);
+                    }
+                    if (date != null)
+                    {
+                        comments = comments.Where(x => (DateTime.Compare((DateTime)date, x.time) <= 0));
+                    }
+                    comments = comments.OrderBy(c => c.time);
+
+                    foreach (var c in comments.ToList())
+                    {
+                        Types.Comment c1 = new Types.Comment();
+                        c1.commentId = c.commentId;
+                        c1.time = c.time;
+                        c1.description = c.description;
+                        c1.upvotes = c.upvotes;
+                        c1.user = new Types.User();
+                        c1.user.userId = c.user.userId;
+                        c1.user.username = c.user.username;
+                        c1.user.firstName = c.user.firstName;
+                        c1.user.lastName = c.user.lastName;
+                        c1.user.password = c.user.password;
+                        c1.post = new Types.Post();
+                        c1.post.postId = c.post.postId;
+                        c1.post.headline = c.post.headline;
+                        c1.post.time = c.post.time;
+                        c1.post.description = c.post.description;
+                        c1.post.upvotes = c.post.upvotes;
+                        c1.post.user = new Types.User();
+                        c1.post.user.userId = c.post.user.userId;
+                        c1.post.user.username = c.post.user.username;
+                        c1.post.user.firstName = c.post.user.firstName;
+                        c1.post.user.lastName = c.post.user.lastName;
+                        c1.post.user.password = c.post.user.password;
+                        c1.replyOfComment = -1;//c.replyOfComment == null ? -1 : c.replyOfComment.commentId;
+                        result.Add(c1);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine("he");
+                    Debug.WriteLine(ex);
+                    Debug.WriteLine("he");
                 }
                 return result;
             }

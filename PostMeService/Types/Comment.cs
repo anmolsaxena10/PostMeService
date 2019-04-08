@@ -23,6 +23,6 @@ namespace PostMeService.Types
         [DataMember]
         public Types.Post post { get; set; }
         [DataMember]
-        public Types.Comment replyOfComment { get; set; }
+        public int replyOfComment { get; set; }
     }
 }
