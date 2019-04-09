@@ -168,7 +168,7 @@ namespace PostMeService
                     }
 
 
-                    posts = posts.OrderBy(p => p.time).Skip((page - 1) * 10).Take(10);
+                    posts = posts.OrderByDescending(p => p.time).Skip((page - 1) * 10).Take(10);
                     
                     foreach (var p in posts.ToList())
                     {
@@ -239,6 +239,10 @@ namespace PostMeService
                 c1.time = c.time;
                 c1.description = c.description;
                 c1.upvotes = c.upvotes;
+                if (c.replyOfComment != -1)
+                {
+                    c1.replyOfComment = ctx.comments.FirstOrDefault(x => x.commentId == c.replyOfComment);
+                }
                 Models.User u = ctx.users.FirstOrDefault(x => x.userId == c.user.userId);
                 c1.user = u;
                 Models.Post p = ctx.posts.FirstOrDefault(x => x.postId == c.post.postId);
@@ -321,7 +325,7 @@ namespace PostMeService
                         c1.post.user.firstName = c.post.user.firstName;
                         c1.post.user.lastName = c.post.user.lastName;
                         c1.post.user.password = c.post.user.password;
-                        c1.replyOfComment = -1;//c.replyOfComment == null ? -1 : c.replyOfComment.commentId;
+                        c1.replyOfComment = c.replyOfComment == null ? -1 : c.replyOfComment.commentId;
                         result.Add(c1);
                     }
                 }
